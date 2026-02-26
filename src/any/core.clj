@@ -20,20 +20,27 @@
          (.write w# ^String (str x#)))
        result#)))
 
+(defmacro any-pred [pred repr]
+  `(any [o# ~repr]
+     (~pred o#)))
+
 (defmacro enum [& items]
-  `(any [x# (format "<enum: %s>" (str/join ", " [~@items]))]
-     (contains? #{~@items} x#)))
+  `(any [repr# (format "<enum: %s>" (str/join ", " [~@items]))]
+     (contains? #{~@items} repr#)))
 
 (defmacro instance [Class]
-  `(any [x# (format "<instance: %s>" (.getName ~Class))]
-     (instance? ~Class x#)))
+  `(any [repr# (format "<instance: %s>" (.getName ~Class))]
+     (instance? ~Class repr#)))
 
-(defmacro pred [fn-name]
-  `(any [x# (format "<pred: %s>" ~(str fn-name))]
-     (~fn-name x#)))
+;; primitives
 
-;; pred
-;; range
+(def string
+  (any-pred cc/string? "<any string>"))
+
+(def uuid
+  (any-pred cc/uuid? "<any UUID>"))
+
+;; java classes
 
 (def LocalDate
   (instance java.time.LocalDate))
@@ -77,6 +84,7 @@
 (def Date
   (instance java.util.Date))
 
+#_
 (def UUID
   (instance java.util.UUID))
 
