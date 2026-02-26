@@ -1,7 +1,7 @@
 (ns any.core
   (:require
    [clojure.string :as str])
-  (:refer-clojure :exclude [uuid int]))
+  (:refer-clojure :exclude [uuid int keyword symbol map list vector seq]))
 
 (alias 'cc 'clojure.core)
 
@@ -25,20 +25,59 @@
      (~pred o#)))
 
 (defmacro enum [& items]
-  `(any [repr# (format "<enum: %s>" (str/join ", " [~@items]))]
+  `(any [repr# (format "<any of: %s>" (str/join ", " [~@items]))]
      (contains? #{~@items} repr#)))
 
 (defmacro instance [Class]
-  `(any [repr# (format "<instance: %s>" (.getName ~Class))]
+  `(any [repr# (format "<any instance of %s>" (.getName ~Class))]
      (instance? ~Class repr#)))
 
-;; primitives
+;; Clojure predicates
 
 (def string
   (any-pred cc/string? "<any string>"))
 
 (def uuid
   (any-pred cc/uuid? "<any UUID>"))
+
+(def uuid-string
+  (any [o "<any string UUID>"]
+    (when (cc/string? o)
+      (try
+        (cc/parse-uuid o)
+        true
+        (catch Exception e
+          false)))))
+
+;; TODO
+;; matches
+;; find
+;; contains
+;; range
+
+#_
+(defn regex [pattern]
+  (any [o (format "<any string matching `%s` pattern>")]
+    (when (cc/string? o)
+      (re-matches )
+      )
+    )
+  )
+
+(def int
+  (any-pred cc/int? "<any integer>"))
+
+(def float
+  (any-pred cc/float? "<any float>"))
+
+(def keyword
+  (any-pred cc/keyword? "<any keyword>"))
+
+(def symbol
+  (any-pred cc/symbol? "<any symbol>"))
+
+(def not-nil
+  (any-pred cc/some? "<any non-nil"))
 
 ;; java classes
 
@@ -83,39 +122,3 @@
 
 (def Date
   (instance java.util.Date))
-
-#_
-(def UUID
-  (instance java.util.UUID))
-
-#_
-(intern 'any.core
-        'Number
-        (instance java.lang.Number))
-
-#_
-(intern 'any.core
-        'String
-        (instance java.lang.String))
-
-
-
-
-;; (defmacro defany [name [other repr] & body]
-;;   `(def ~name (any [~other ~repr] ~@body)))
-
-;; #_
-;; (defany int [x "any int"]
-;;   (cc/int? x))
-
-;; (defany uuid [x "any uuid"]
-;;   (cc/uuid? x))
-
-;; (defany uuid [x "any keyword"]
-;;   (cc/keyword? x))
-
-;; (defany local-date [x "any LocalDate"]
-;;   (instance? LocalDate x))
-
-#_
-(= {:foo (enum :fo :bar :baz)} {:foo :sdfsdf})
