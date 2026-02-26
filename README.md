@@ -13,6 +13,8 @@ on.
 - [Why?](#why)
 - [Installation](#installation)
 - [Builtin objects](#builtin-objects)
+- [On Equality vs Equivalence](#on-equality-vs-equivalence)
+- [Collections](#collections)
 - [Custom objects](#custom-objects)
 - [Other](#other)
 
@@ -74,6 +76,10 @@ com.github.igrishaev/any {:mvn/version "0.1.0-SNAPSHOT"}
 ~~~
 
 ## Builtin objects
+
+## On Equality vs Equivalence
+
+## Collections
 
 ## Custom objects
 
