@@ -1,7 +1,8 @@
 (ns any.core
   (:require
    [clojure.string :as str])
-  (:refer-clojure :exclude [uuid int keyword symbol map list vector seq]))
+  (:refer-clojure :exclude [uuid int keyword symbol
+                            re-matches re-find range]))
 
 (alias 'cc 'clojure.core)
 
@@ -24,13 +25,20 @@
   `(any [o# ~repr]
      (~pred o#)))
 
-(defmacro enum [& items]
-  `(any [repr# (format "<any of: %s>" (str/join ", " [~@items]))]
-     (contains? #{~@items} repr#)))
-
 (defmacro instance [Class]
   `(any [repr# (format "<any instance of %s>" (.getName ~Class))]
      (instance? ~Class repr#)))
+
+;; enums
+
+(defn enum-seq [items]
+  (let [-set (set items)]
+    (let [repr (format "<any of: #{%s}>" (str/join ", " items))]
+      (any [o repr]
+        (contains? -set o)))))
+
+(defn enum [& items]
+  (enum-seq items))
 
 ;; Clojure predicates
 
@@ -42,27 +50,36 @@
 
 (def uuid-string
   (any [o "<any string UUID>"]
-    (when (cc/string? o)
+    (if (cc/string? o)
       (try
         (cc/parse-uuid o)
         true
         (catch Exception e
-          false)))))
+          false))
+      false)))
 
-;; TODO
-;; matches
-;; find
-;; contains
-;; range
+(defn range [from to]
+  (any [o (format "<any number in range [%s, %s)>" from to)]
+    (if (cc/number? o)
+      (and (<= from o) (< o to)))))
 
-#_
-(defn regex [pattern]
-  (any [o (format "<any string matching `%s` pattern>")]
-    (when (cc/string? o)
-      (re-matches )
-      )
-    )
-  )
+(defn re-matches [re-pattern]
+  (any [o (format "<any string matching %s>" re-pattern)]
+    (if (cc/string? o)
+      (some? (cc/re-matches re-pattern o))
+      false)))
+
+(defn re-find [re-pattern]
+  (any [o (format "<any string including %s>" re-pattern)]
+    (if (cc/string? o)
+      (some? (cc/re-find re-pattern o))
+      false)))
+
+(defn includes [substring]
+  (any [o (format "<any string including '%s'>" substring)]
+    (if (cc/string? o)
+      (str/includes? o substring)
+      false)))
 
 (def int
   (any-pred cc/int? "<any integer>"))
