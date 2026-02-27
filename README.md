@@ -113,9 +113,9 @@ but not values. With `Any`, you obtain both: check values and when they're
 random or too complex, rollback to types.
 
 I can hear you're saying "use a library for matching" like core.match, matchete,
-machto, strucjure, and so on. But they're complex, and I don't like complex
-things. `Any` is as dull as ever possible. You don't have to rewrite your tests,
-but only replace some values with `any/something`.
+machto, strucjure, and so on. I know. But they're complex, and I don't like
+complex things. `Any` is **as dull as ever possible**. You don't have to rewrite
+your tests, only replace some values with `any/something`.
 
 ## Installation
 
