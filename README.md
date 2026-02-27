@@ -264,6 +264,13 @@ body with the logic of equality:
 The body should always return true or false, but not `nil`. It's better to wrap
 the result with `boolean` to prevent such cases.
 
+## Links
+
+[blog]: https://grishaev.me/clojure-any-equals/
+
+The idea of making Any comes from this blog post: ["A fake Clojure Object equals
+to what you want"][blog].
+
 ## Other
 
 ~~~
