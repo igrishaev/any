@@ -1,9 +1,8 @@
 # Any
 
-A small helper that saves lines of code in tests. Provides a number of objects
-with a custom `equals` method implemetation. Say, the `any.core/uuid` object
-equals to any possible UUID ever. The same applies to strings, numbers, and so
-on.
+A helper to saves lines of code in tests. Provides a number of objects with a
+custom `equals` method. Say, the `any.core/uuid` object equals to any UUID. The
+same approach for strings, numbers, and so on.
 
 ## Table of Contents
 
@@ -40,8 +39,7 @@ on.
 (= any/symbol :keyword) ;; false
 ~~~
 
-What is great, such equality works for nested items in maps, vector and other
-collections:
+Custom equality works for nested items in maps, vectors and other collections:
 
 ~~~clojure
 (= {:id any/uuid :name "Ivan"}
@@ -51,9 +49,9 @@ collections:
    (list (random-uuid) "test"))
 ~~~
 
-The library provides a lot of built-in objects for equality: Clojure basic
-types, Java types from `java.time.*` and other packages, regex checking, ranges,
-and more (see below).
+The library provides various objects for equality: Clojure primitives, Java
+classes from `java.time.*` and other packages, regex checking, ranges, and more
+(see below).
 
 ## Why?
 
@@ -72,8 +70,8 @@ All fields are constant so there is nothing to worry about. A regular `=`
 operator works fine.
 
 Should `some-function` return a map with a random UUID, you cannot blindly
-compare maps: it won't work. At this moment, various solutions come into
-play. You may `dissoc` all the random fiels and compare only the constant part:
+compare maps with `=`. At this moment, various solutions come into play. You may
+`dissoc` all random fiels and compare only the constant subpart:
 
 ~~~clojure
 (deftest test-some-func
@@ -98,7 +96,7 @@ though. That leads to clumsy code:
     (is (instance? java.time.Instance (:created_at result)))))
 ~~~
 
-With Any, this could be achieved in a shorter way:
+Any achieves the same in a shorter way:
 
 ~~~clojure
 (deftest test-some-func
@@ -110,9 +108,9 @@ With Any, this could be achieved in a shorter way:
          (some-function 1 "abc" [:foo]))))
 ~~~
 
-This reminds Clojure Spec or Malli approach, yet only partially. Schemas usually
-check types but not values. With Any, you obtain both: check values and when
-they're random or too complex, check types.
+This reminds Clojure Spec or Malli, yet partially. Schemas usually check types
+but not values. With Any, you obtain both: check values and when they're random
+or too complex, rollback to types.
 
 ## Installation
 
@@ -143,7 +141,7 @@ Clojure primitives:
 
 Parameter-depended objects:
 
-| Example                            | Comment                                               |
+| Object                             | Comment                                               |
 |------------------------------------|-------------------------------------------------------|
 | `(any/instance SomeClass)`         | check if a value is an instance of `SomeClass`        |
 | `(any/enum :foo :bar: :baz)`       | check if a value if one of the variadic arguments     |
@@ -152,6 +150,17 @@ Parameter-depended objects:
 | `(any/re-matches #"some regex")`   | if a value is a string matching the pattern           |
 | `(any/re-find #some regex)`        | if a value is a string where the pattern can be found |
 | `(any/includes "substring")`       | check if a string includes a substring                |
+
+Examples:
+
+~~~clojure
+(= (any/range 1 9) 3)            ;; true
+(= (any/range 1 9) 9)            ;; false
+(= (any/enum 1 :foo 9 "test") 9) ;; true
+(= (any/re-matches #"\s+foobar\s+") "  foobar  ") ;; true
+(= (any/re-find #"\d+") "  foo42bar  ")           ;; true
+(= (any/includes "foo") "aa foo bb")              ;; true
+~~~
 
 Java instances:
 
@@ -173,7 +182,7 @@ Java instances:
 
 ## Representation
 
-Every Any ojbect has a custom `.toString` and `print-method`
+Every Any object has a custom `.toString` and `print-method`
 implementations. This makes the output a bit clearer in tests:
 
 ~~~clojure
@@ -195,22 +204,23 @@ expected: {:result {:data {:created_at <any instance of java.time.Instant>}}}
 ## Equality, Equivalence, and Order
 
 Keep in mind that the standard `=` Clojure function relies on equivalence, not
-equality. Equivalence is a custom to compare objects in Clojure. Say, an
-instance of `ArrayList` and a Clojure list are equivalent if they are of the
+equality. Equivalence is a custom way to compare objects in Clojure. Say,
+instances of `ArrayList` and `PersistentList` are equivalent if they are of the
 same size and each Nth element is equivalent to its counterpart.
 
-In Clojure, you cannot extend nor override equivalence as it's hardocoded in
-Java sources. The `.equals` method is a part of it and moslty used as the last
-resort. Thus, Any cannot provide objects for maching agains collections.
+In Clojure, you cannot extend nor override equivalence as it's hardcoded in Java
+sources. The `.equals` method is a part of equivalence and is mostly used as the
+last resort. For this reason, Any doesn't provide objects for matching
+collections: it doesn't work.
 
-When comparing Any objects with values, the order matters. Any objects should
-stay at the first place:
+When comparing Any objects with values, the order matters. Objects provided by
+Any should stay first:
 
 ~~~clojure
 ;; like this
 (= any/text "hello")
 
-;; but not like this
+;; NOT like this
 (= "hello" any/text)
 ~~~
 
@@ -220,7 +230,7 @@ These two forms expand into the following:
 ;; like this
 (.equals any/text "hello")
 
-;; but not like this
+;; NOT like this
 (.equals "hello" any/text )
 ~~~
 
@@ -230,7 +240,7 @@ method is called.
 
 ## Custom objects
 
-All Any objects are built with a number of macros. Here is how you can reuse
+Any objects are built with a number of utility macros, and you can reuse
 them. The `any/instance` accepts a class and returns an object which equals to
 instances of that class only:
 
@@ -244,12 +254,15 @@ instances of that class only:
 ~~~
 
 The `any` macro accepts a binding symbol, a text representation and a custom
-body where you describe the logic of equality:
+body with the logic of equality:
 
 ~~~clojure
 (any/any [x "text for (.toString) or (print)"]
   (boolean (some-condition x)))
 ~~~
+
+The body should always return true or false, but not `nil`. It's better to wrap
+the result with `boolean` to prevent such cases.
 
 ## Other
 
