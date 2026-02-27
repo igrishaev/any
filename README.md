@@ -93,7 +93,7 @@ though. That leads to clumsy code:
             :more {:ok true}}
            (dissoc result :id :created_at)))
     (is (uuid? (:id result)))
-    (is (instance? java.time.Instance (:created_at result)))))
+    (is (instance? java.time.Instant (:created_at result)))))
 ~~~
 
 `Any` achieves the same in a shorter way:
@@ -101,7 +101,7 @@ though. That leads to clumsy code:
 ~~~clojure
 (deftest test-some-func
   (is (= {:id any/uuid
-          :created_at any/Instance
+          :created_at any/Instant
           :this 1
           :that [:foo :bar]
           :more {:ok true}}
