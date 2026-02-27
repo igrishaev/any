@@ -1,6 +1,6 @@
 # Any
 
-A helper to saves lines of code in tests. Provides a number of objects with a
+A helper to save lines of code in tests. Provides a number of objects with a
 custom `equals` method. Say, the `any.core/uuid` object equals to any UUID. The
 same approach for strings, numbers, and so on.
 
