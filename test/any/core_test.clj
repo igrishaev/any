@@ -54,6 +54,12 @@
   (is (= "<any of: #{1, :foo, test}>"
          (pr-str (any/enum 1 :foo "test")))))
 
+(deftest test-coll
+  (let [numbers (any/any-pred #(and (seqable? %) (every? number? %)) "a coll of numbers")]
+    (is (= numbers [1 2 3]))
+    (is (not= numbers ["a" 1 2]))
+    (is (not= numbers :not-numbers))))
+
 (deftest test-regex
 
   (testing "re-matches"
