@@ -1,2 +1,3 @@
 - add fn? ifn?
 - add exceptions
+- clojure.lang.IPersistentCollection and equiv
