@@ -215,8 +215,9 @@ same size and each Nth element is equivalent to its counterpart.
 
 In Clojure, you cannot extend nor override equivalence as it's hardcoded in Java
 sources. The `.equals` method is a part of equivalence and is mostly used as the
-last resort. For this reason, Any doesn't provide objects for matching
-collections: it doesn't work.
+last resort. For this reason, Clojure won't let you override `=` for collections
+like maps, vectors and so on. You can only affect non-collection types (numbers,
+UUIDs, strings, etc).
 
 When comparing `Any` objects with values, the order matters. Objects provided by
 `Any` should go first:
