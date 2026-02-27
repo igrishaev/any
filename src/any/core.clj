@@ -52,7 +52,7 @@
   (any [o "<any string UUID>"]
     (if (cc/string? o)
       (try
-        (cc/parse-uuid o)
+        (java.util.UUID/fromString o)
         true
         (catch Exception e
           false))
@@ -139,3 +139,6 @@
 
 (def Date
   (instance java.util.Date))
+
+(def UUID
+  (instance java.util.UUID))

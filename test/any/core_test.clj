@@ -79,3 +79,34 @@
   (is (not= (any/range 1 9) 9))
   (is (= (pr-str (any/range 1 9))
          "<any number in range [1, 9)>")))
+
+
+(comment ;; demo for readme
+
+  (= {:id any/uuid :name "Ivan"}
+     {:id (random-uuid) :name "Ivan"})
+
+  (= [any/uuid any/string] (list (random-uuid) "test"))
+
+  (deftest test-some-func
+    (let [result (some-function 1 "abc" [:foo])]
+      (is (= {:this 1
+              :that [:foo :bar]
+              :more {:ok true}}
+             (dissoc result :id :created_at)))
+      (is (uuid? (:id result)))
+      (is (instance? java.time.Instance (:created_at result)))))
+
+  (deftest test-some-func
+    (is (= {:id any/uuid
+            :created_at any/Instance
+            :this 1
+            :that [:foo :bar]
+            :more {:ok true}}
+           (some-function 1 "abc" [:foo]))))
+
+  (is (= {:id any/uuid :name "Ivan"}
+         {:id 42 :name "Ivan"}))
+
+  (is (= {:result {:data {:created_at any/Instant}}}
+         {:result {:data {:created_at "bad string"}}})))

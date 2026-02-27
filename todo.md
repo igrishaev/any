@@ -1,1 +1,3 @@
-fix parse-uuid
+- add fn? ifn?
+- add exceptions
+- fix parse-uuid
