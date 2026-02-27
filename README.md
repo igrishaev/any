@@ -117,13 +117,13 @@ or too complex, rollback to types.
 Lein:
 
 ~~~clojure
-[com.github.igrishaev/any "0.1.0-SNAPSHOT"]
+[com.github.igrishaev/any "0.1.0"]
 ~~~
 
 Deps.edn
 
 ~~~clojure
-com.github.igrishaev/any {:mvn/version "0.1.0-SNAPSHOT"}
+com.github.igrishaev/any {:mvn/version "0.1.0"}
 ~~~
 
 ## Builtin objects
