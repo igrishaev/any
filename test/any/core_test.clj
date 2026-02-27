@@ -1,7 +1,12 @@
 (ns any.core-test
+  (:refer-clojure :exclude [random-uuid])
   (:require
    [clojure.test :refer [deftest is testing]]
    [any.core :as any]))
+
+;; for Clojure < 11
+(defn random-uuid []
+  (java.util.UUID/randomUUID))
 
 (deftest test-clojure-entities
   (is (= {:uuid any/uuid
