@@ -96,7 +96,7 @@ though. That leads to clumsy code:
     (is (instance? java.time.Instance (:created_at result)))))
 ~~~
 
-Any achieves the same in a shorter way:
+`Any` achieves the same in a shorter way:
 
 ~~~clojure
 (deftest test-some-func
@@ -109,8 +109,13 @@ Any achieves the same in a shorter way:
 ~~~
 
 This reminds Clojure Spec or Malli, yet partially. Schemas usually check types
-but not values. With Any, you obtain both: check values and when they're random
-or too complex, rollback to types.
+but not values. With `Any`, you obtain both: check values and when they're
+random or too complex, rollback to types.
+
+I can hear you're saying "use a library for matching" like core.match, matchete,
+machto, strucjure, and so on. But they're complex, and I don't like complex
+things. `Any` is as dull as ever possible. You don't have to rewrite your tests,
+but only replace some values with `any/something`.
 
 ## Installation
 
@@ -182,7 +187,7 @@ Java instances:
 
 ## Representation
 
-Every Any object has a custom `.toString` and `print-method`
+Every `Any` object has a custom `.toString` and `print-method`
 implementations. This makes the output a bit clearer in tests:
 
 ~~~clojure
@@ -213,8 +218,8 @@ sources. The `.equals` method is a part of equivalence and is mostly used as the
 last resort. For this reason, Any doesn't provide objects for matching
 collections: it doesn't work.
 
-When comparing Any objects with values, the order matters. Objects provided by
-Any should stay first:
+When comparing `Any` objects with values, the order matters. Objects provided by
+`Any` should go first:
 
 ~~~clojure
 ;; like this
@@ -240,7 +245,7 @@ method is called.
 
 ## Custom objects
 
-Any objects are built with a number of utility macros, and you can reuse
+`Any` objects are built with a number of utility macros, and you can reuse
 them. The `any/instance` accepts a class and returns an object which equals to
 instances of that class only:
 
@@ -268,8 +273,8 @@ the result with `boolean` to prevent such cases.
 
 [blog]: https://grishaev.me/clojure-any-equals/
 
-The idea of making Any comes from this blog post: ["A fake Clojure Object equals
-to what you want"][blog].
+The idea of making `Any` originally comes from this blog post: ["A fake Clojure
+Object equals to what you want"][blog].
 
 ## Other
 
