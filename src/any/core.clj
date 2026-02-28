@@ -11,9 +11,13 @@
 (defmacro any [[other repr] & body]
   (let [this (gensym "this")]
     `(let [result#
-           (reify Object
-             (equals [~this ~other]
+           (reify
+             clojure.lang.IPersistentCollection
+             (equiv [~this ~other]
                ~@body)
+             Object
+             (equals [~this ~other]
+               (= ~this ~other))
              ~@(when repr
                  [`(toString [~this] ~repr)]))]
        (defmethod print-method (type result#)
