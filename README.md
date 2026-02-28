@@ -210,40 +210,37 @@ expected: {:result {:data {:created_at <any instance of java.time.Instant>}}}
 ## Equality, Equivalence, and Order
 
 Keep in mind that the standard `=` Clojure function relies on equivalence, not
-equality. Equivalence is a custom way to compare objects in Clojure. Say,
-instances of `ArrayList` and `PersistentList` are equivalent if they are of the
-same size and each Nth element is equivalent to its counterpart.
-
-In Clojure, you cannot extend nor override equivalence as it's hardcoded in Java
-sources. The `.equals` method is a part of equivalence and is mostly used as the
-last resort. For this reason, Clojure won't let you override `=` for collections
-like maps, vectors and so on. You can only affect non-collection types (numbers,
-UUIDs, strings, etc).
+equality. Equivalence is a custom way to compare objects in Clojure,
+where the Java `.equals` method is only a fallback. Most saliently, if either argument
+in the comparison is a collection the leftmost collection's `.equiv` is used instead,
+which is why Any objects implement `IPersistentCollection.equiv` as well as `Object.equals`.
 
 When comparing `Any` objects with values, the order matters. Objects provided by
 `Any` should go first:
 
 ~~~clojure
+(def any-vector (any/any-pred vector? "<any Clojure vector>"))
+
 ;; like this
-(= any/text "hello")
+(= any-vector [1 2 3])
 
 ;; NOT like this
-(= "hello" any/text)
+(= [1 2 3] any-vector)
 ~~~
 
 These two forms expand into the following:
 
 ~~~clojure
 ;; like this
-(.equals any/text "hello")
+(.equiv any-vector [1 2 3])
 
 ;; NOT like this
-(.equals "hello" any/text )
+(.equiv [1 2 3] any-vector)
 ~~~
 
-In the first case, the `any/text` object has got its own logic checking if the
-opposite object is a string. In the second case, the standard `String.equals`
-method is called.
+In the first case, the `any-vector` object has got its own logic 
+checking if the opposite object is a vector. In the second case, 
+the `IPersistentVector.equiv` method is called erroneously instead.
 
 ## Custom objects
 
