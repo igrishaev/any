@@ -13,7 +13,7 @@ release:
 
 snapshot:
 	lein with-profile uberjar install
-	lein with-profile uberjar deploy
+	lein with-profile uberjar deploy clojars
 
 repl:
 	lein repl
