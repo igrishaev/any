@@ -1,8 +1,8 @@
 # Any
 
 A helper to saves lines of code in tests. Provides a number of objects with a
-custom `equals` method. Say, the `any.core/uuid` object equals to any UUID. The
-same approach for strings, numbers, and so on.
+fake (forged) equality logic. Say, the `any.core/uuid` object equals to any
+UUID. The same approach for strings, numbers, and so on.
 
 ## Table of Contents
 
@@ -138,6 +138,10 @@ Clojure primitives:
 - `any/keyword`
 - `any/symbol`
 - `any/not-nil` (like `some?`)
+- `any/vector`
+- `any/list`
+- `any/set`
+- `any/map`
 
 Parameter-depended objects:
 
@@ -150,6 +154,9 @@ Parameter-depended objects:
 | `(any/re-matches #"some regex")`   | if a value is a string matching the pattern           |
 | `(any/re-find #some regex)`        | if a value is a string where the pattern can be found |
 | `(any/includes "substring")`       | check if a string includes a substring                |
+| `(any/starts-with "substring")`    | check if a string starts with a substring             |
+| `(any/ends-with "substring")`      | check if a string ends with a substring               |
+| `(any/count 32)`                   | check if an object has exact 32 items                 |
 
 Examples:
 
@@ -160,6 +167,7 @@ Examples:
 (= (any/re-matches #"\s+foobar\s+") "  foobar  ") ;; true
 (= (any/re-find #"\d+") "  foo42bar  ")           ;; true
 (= (any/includes "foo") "aa foo bb")              ;; true
+(= (any/count 3) [1 2 3])                         ;; true
 ~~~
 
 Java instances:
@@ -179,6 +187,17 @@ Java instances:
 - `any/Writer`
 - `any/Date`
 - `any/UUID`
+
+Java arrays:
+- `any/bytes`
+- `any/ints`
+- `any/shorts`
+- `any/longs`
+- `any/floats`
+- `any/doubles`
+- `any/booleans`
+- `any/chars`
+- `any/objects`
 
 ## Representation
 
@@ -208,10 +227,10 @@ equality. Equivalence is a custom way to compare objects in Clojure. Say,
 instances of `ArrayList` and `PersistentList` are equivalent if they are of the
 same size and each Nth element is equivalent to its counterpart.
 
-In Clojure, you cannot extend nor override equivalence as it's hardcoded in Java
-sources. The `.equals` method is a part of equivalence and is mostly used as the
-last resort. For this reason, Any doesn't provide objects for matching
-collections: it doesn't work.
+Prior to 0.1.1, Any provided `(reify Object)` objects with a custom `equals`
+method. Since 0.1.1, it provides `(reify IPersistentCollection)` with the
+overridden `equiv` method. This approach gives more freedom and open doors for
+collections.
 
 When comparing Any objects with values, the order matters. Objects provided by
 Any should stay first:
@@ -228,7 +247,7 @@ These two forms expand into the following:
 
 ~~~clojure
 ;; like this
-(.equals any/text "hello")
+(.equiv any/text "hello")
 
 ;; NOT like this
 (.equals "hello" any/text )

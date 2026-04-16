@@ -99,9 +99,42 @@
            "AABBCC"))))
 
 (deftest test-collections
+
+  ;; https://github.com/igrishaev/any/pull/2/changes
+  (let [numbers (any/any-pred #(and (seqable? %) (every? number? %)) "a coll of numbers")]
+    (is (= numbers [1 2 3]))
+    (is (not= numbers ["a" 1 2]))
+    (is (not= numbers :not-numbers)))
+
   (testing "count"
-    (is (= (any/count 3)
-           [1 2 3]))))
+    (is (= (any/count 3) [1 2 3]))
+    (is (= (any/count 0) nil))
+    (is (not= (any/count 3) [1 2 3 4])))
+
+  (testing "collection predicates"
+    (is (= any/vector [1 2 3]))
+    (is (not= any/vector '(1 2 3)))
+
+    (is (= any/list '(1 2 3)))
+    (is (not= any/list [1 2 3]))
+
+    (is (= any/set #{1 2 3}))
+    (is (not= any/set [1 2 3]))
+
+    (is (= any/map {:foo 1}))
+    (is (not= any/map 42))))
+
+(deftest test-arrays
+  (is (= any/bytes (byte-array 32)))
+  (is (= "<any instance of [B>" (str any/bytes)))
+  (is (= any/ints (int-array 32)))
+  (is (= any/shorts (short-array 32)))
+  (is (= any/longs (long-array 32)))
+  (is (= any/floats (float-array 32)))
+  (is (= any/doubles (double-array 32)))
+  (is (= any/booleans (boolean-array 32)))
+  (is (= any/chars (char-array 32)))
+  (is (= any/objects (object-array 32))))
 
 
 (comment ;; demo for readme
