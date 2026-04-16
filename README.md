@@ -237,7 +237,6 @@ Prior to 0.1.1, Any provided `(reify Object)` objects with a custom `equals`
 method. Since 0.1.1, it provides `(reify IPersistentCollection)` with the
 overridden `equiv` method. This approach gives more freedom and open doors for
 collections.
-UUIDs, strings, etc).
 
 When comparing `Any` objects with values, the order matters. Objects provided by
 `Any` should go first:
