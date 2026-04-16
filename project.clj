@@ -1,4 +1,4 @@
-(defproject com.github.igrishaev/any "0.1.1-SNAPSHOT"
+(defproject com.github.igrishaev/any "0.1.1"
 
   :description
   "Objects for smart comparison in tests."
