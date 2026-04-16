@@ -21,6 +21,10 @@
              IPersistentCollection
              (equiv [~this ~other]
                ~@body)
+             (empty [~this]
+               nil)
+             (seq [~this]
+               nil)
              ~@(when repr
                  [`(toString [~this] ~repr)]))]
        (defmethod print-method (type result#)
