@@ -124,13 +124,13 @@ values with `any/something`.
 Lein:
 
 ~~~clojure
-[com.github.igrishaev/any "0.1.0"]
+[com.github.igrishaev/any "0.1.1"]
 ~~~
 
 Deps.edn
 
 ~~~clojure
-com.github.igrishaev/any {:mvn/version "0.1.0"}
+com.github.igrishaev/any {:mvn/version "0.1.1"}
 ~~~
 
 ## Builtin objects
