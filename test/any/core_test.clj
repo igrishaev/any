@@ -70,13 +70,7 @@
     (is (not= (any/re-find #"\d+")
               "  foobar  "))
     (is (= "<any string including \\s+foobar\\s+>"
-           (pr-str (any/re-find #"\s+foobar\s+")))))
-
-  (testing "includes"
-    (is (= (any/includes "foo")
-           "aa foo bb"))
-    (is (not= (any/includes "foo")
-              "aa lol bb"))))
+           (pr-str (any/re-find #"\s+foobar\s+"))))))
 
 (deftest test-range
   (is (= (any/range 1 9) 3))
@@ -84,6 +78,30 @@
   (is (not= (any/range 1 9) 9))
   (is (= (pr-str (any/range 1 9))
          "<any number in range [1, 9)>")))
+
+(deftest test-string-cases
+  (testing "includes"
+    (is (= (any/includes "foo")
+           "aa foo bb"))
+    (is (not= (any/includes "foo")
+              "aa lol bb")))
+
+  (testing "starts with"
+    (is (= (any/starts-with "a")
+           "aabbcc"))
+    (is (not= (any/starts-with "a")
+              "AABBCC")))
+
+  (testing "ends with"
+    (is (= (any/ends-with "c")
+           "aabbcc"))
+    (is (not= (any/ends-with "c")
+           "AABBCC"))))
+
+(deftest test-collections
+  (testing "count"
+    (is (= (any/count 3)
+           [1 2 3]))))
 
 
 (comment ;; demo for readme

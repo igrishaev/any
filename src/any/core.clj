@@ -2,6 +2,7 @@
   (:require
    [clojure.string :as str])
   (:refer-clojure :exclude [uuid int keyword symbol
+                            count float
                             re-matches re-find range]))
 
 (alias 'cc 'clojure.core)
@@ -11,8 +12,8 @@
 (defmacro any [[other repr] & body]
   (let [this (gensym "this")]
     `(let [result#
-           (reify Object
-             (equals [~this ~other]
+           (reify clojure.lang.IPersistentCollection
+             (equiv [~this ~other]
                ~@body)
              ~@(when repr
                  [`(toString [~this] ~repr)]))]
@@ -81,6 +82,18 @@
       (str/includes? o substring)
       false)))
 
+(defn ends-with [substring]
+  (any [o (format "<string ending with '%s'>" substring)]
+    (if (cc/string? o)
+      (str/ends-with? o substring)
+      false)))
+
+(defn starts-with [substring]
+  (any [o (format "<string starting with '%s'>" substring)]
+    (if (cc/string? o)
+      (str/starts-with? o substring)
+      false)))
+
 (def int
   (any-pred cc/int? "<any integer>"))
 
@@ -142,3 +155,10 @@
 
 (def UUID
   (instance java.util.UUID))
+
+;; smart things
+
+(defn count [n]
+  (let [repr (format "<count %s>" n)]
+    (any [o repr]
+      (-> o cc/count (= n)))))
