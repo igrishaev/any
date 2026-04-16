@@ -15,6 +15,7 @@ UUID. The same approach for strings, numbers, and so on.
 - [Representation](#representation)
 - [Equality, Equivalence, and Order](#equality-equivalence-and-order)
 - [Custom objects](#custom-objects)
+- [Links](#links)
 - [Other](#other)
 
 <!-- tocstop -->
