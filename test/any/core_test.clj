@@ -70,13 +70,7 @@
     (is (not= (any/re-find #"\d+")
               "  foobar  "))
     (is (= "<any string including \\s+foobar\\s+>"
-           (pr-str (any/re-find #"\s+foobar\s+")))))
-
-  (testing "includes"
-    (is (= (any/includes "foo")
-           "aa foo bb"))
-    (is (not= (any/includes "foo")
-              "aa lol bb"))))
+           (pr-str (any/re-find #"\s+foobar\s+"))))))
 
 (deftest test-range
   (is (= (any/range 1 9) 3))
@@ -84,6 +78,63 @@
   (is (not= (any/range 1 9) 9))
   (is (= (pr-str (any/range 1 9))
          "<any number in range [1, 9)>")))
+
+(deftest test-string-cases
+  (testing "includes"
+    (is (= (any/includes "foo")
+           "aa foo bb"))
+    (is (not= (any/includes "foo")
+              "aa lol bb")))
+
+  (testing "starts with"
+    (is (= (any/starts-with "a")
+           "aabbcc"))
+    (is (not= (any/starts-with "a")
+              "AABBCC")))
+
+  (testing "ends with"
+    (is (= (any/ends-with "c")
+           "aabbcc"))
+    (is (not= (any/ends-with "c")
+           "AABBCC"))))
+
+(deftest test-collections
+
+  ;; https://github.com/igrishaev/any/pull/2/changes
+  (let [numbers (any/any-pred #(and (seqable? %) (every? number? %)) "a coll of numbers")]
+    (is (= numbers [1 2 3]))
+    (is (not= numbers ["a" 1 2]))
+    (is (not= numbers :not-numbers)))
+
+  (testing "count"
+    (is (= (any/count 3) [1 2 3]))
+    (is (= (any/count 0) nil))
+    (is (not= (any/count 3) [1 2 3 4])))
+
+  (testing "collection predicates"
+    (is (= any/vector [1 2 3]))
+    (is (not= any/vector '(1 2 3)))
+
+    (is (= any/list '(1 2 3)))
+    (is (not= any/list [1 2 3]))
+
+    (is (= any/set #{1 2 3}))
+    (is (not= any/set [1 2 3]))
+
+    (is (= any/map {:foo 1}))
+    (is (not= any/map 42))))
+
+(deftest test-arrays
+  (is (= any/bytes (byte-array 32)))
+  (is (= "<any instance of [B>" (str any/bytes)))
+  (is (= any/ints (int-array 32)))
+  (is (= any/shorts (short-array 32)))
+  (is (= any/longs (long-array 32)))
+  (is (= any/floats (float-array 32)))
+  (is (= any/doubles (double-array 32)))
+  (is (= any/booleans (boolean-array 32)))
+  (is (= any/chars (char-array 32)))
+  (is (= any/objects (object-array 32))))
 
 
 (comment ;; demo for readme
