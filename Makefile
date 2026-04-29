@@ -11,6 +11,10 @@ test:
 release:
 	lein release
 
+snapshot:
+	lein with-profile uberjar install
+	lein with-profile uberjar deploy
+
 repl:
 	lein repl
 
