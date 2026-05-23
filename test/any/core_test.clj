@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [random-uuid])
   (:require
    [clojure.test :refer [deftest is testing]]
+   [clojure.walk :as walk]
    [any.core :as any]))
 
 ;; for Clojure < 11
@@ -136,6 +137,30 @@
   (is (= any/chars (char-array 32)))
   (is (= any/objects (object-array 32))))
 
+(deftest test-postwalk-preserves-any-objects
+  (testing "postwalk identity preserves scalar any objects"
+    (is (identical? any/uuid (walk/postwalk identity any/uuid)))
+    (is (identical? any/string (walk/postwalk identity any/string)))
+    (is (identical? any/int (walk/postwalk identity any/int))))
+
+  (testing "postwalk preserves any objects nested in collections"
+    (is (= [any/uuid any/string]
+           (walk/postwalk identity [any/uuid any/string])))
+    (is (= {:id any/uuid :name any/string}
+           (walk/postwalk identity {:id any/uuid :name any/string}))))
+
+  (testing "cider-nrepl deep-sorted-maps simulation"
+    (let [deep-sorted-maps
+          (fn [m]
+            (walk/postwalk
+             (fn [x]
+               (if (and (map? x) (not (record? x)))
+                 (into (sorted-map) x)
+                 x))
+             m))]
+      (is (identical? any/uuid (deep-sorted-maps any/uuid)))
+      (is (= {:id any/uuid :name "test"}
+             (deep-sorted-maps {:id any/uuid :name "test"}))))))
 
 (comment ;; demo for readme
 
